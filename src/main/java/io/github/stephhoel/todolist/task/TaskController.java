@@ -40,7 +40,7 @@ public class TaskController {
     }
 
     var task = this.taskRepository.save(taskModel);
-    return ResponseEntity.status(HttpStatus.CREATED).body(task);
+    return ResponseEntity.status(201).body(task);
   }
 
   @GetMapping("/")
@@ -53,15 +53,15 @@ public class TaskController {
     var task = this.taskRepository.findById(id).orElse(null);
 
     if(task==null){
-      return ResponseEntity.badRequest().body("Tarefa não encontrada");
+      return ResponseEntity.status(404).body("Tarefa não encontrada");
     }
 
     if (!task.getIdUser().equals(request.getAttribute("idUser"))) {
-      return ResponseEntity.badRequest().body("Usuário sem permissão para alterar a tarefa");
+      return ResponseEntity.status(401).body("Usuário sem permissão para alterar a tarefa");
     }
 
     Utils.copyNonNullProperties(taskModel, task);
 
-    return ResponseEntity.ok().body(this.taskRepository.save(task));
+    return ResponseEntity.status(204).body(this.taskRepository.save(task));
   }
 }
